@@ -210,10 +210,10 @@ with tab3:
     from Detection import predict_pcos
 
     # Assume 'input_dict' contains user input collected via Streamlit form
-    df_input = pd.DataFrame([input_dict])
+    #df_input = pd.DataFrame([input_df])
 
     # Get prediction
-    result = predict_pcos(df_input)
+    result = predict_pcos(input_df)
 
     # Show result
     st.success("PCOS Detected" if result == 1 else "No PCOS Detected")
@@ -297,7 +297,7 @@ with tab4:
 # Sidebar with info
 with st.sidebar:
     st.title("PCOS Detection System")
-    st.image("D:\MachineLearning\PCOS-detection\icon2.jpg", width=200)  # Replace with actual image
+    st.image('icon2.jpg', width=200)  # Replace with actual image
     st.markdown("""
     ### About PCOS
     Polycystic ovary syndrome (PCOS) is a hormonal disorder common among women of reproductive age. 
