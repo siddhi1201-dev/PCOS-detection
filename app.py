@@ -4,6 +4,13 @@ import numpy as np
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.compose import ColumnTransformer
 import matplotlib.pyplot as plt
+import joblib
+
+# Load saved model and preprocessors
+model = joblib.load('dt_model.pkl')           # ⬅️ Decision Tree model(best accuracy)
+encoder = joblib.load('onehot_encoder.pkl')
+scaler = joblib.load('scaler.pkl')
+
 
 # Page configuration
 st.set_page_config(
@@ -16,7 +23,7 @@ st.set_page_config(
 st.markdown("""
     <style>
     .main {
-        background-color: #f9f5ff;
+        background-color: #FFD8D8;
     }
     .sidebar .sidebar-content {
         background-color: #eaddff;
@@ -199,6 +206,18 @@ with tab2:
 with tab3:
     st.header("PCOS Risk Prediction Results")
     
+    import pandas as pd
+    from Detection import predict_pcos
+
+    # Assume 'input_dict' contains user input collected via Streamlit form
+    df_input = pd.DataFrame([input_dict])
+
+    # Get prediction
+    result = predict_pcos(df_input)
+
+    # Show result
+    st.success("PCOS Detected" if result == 1 else "No PCOS Detected")
+
     if 'submitted' in locals() and submitted:
         # Placeholder for actual model prediction
         st.info("Model prediction would appear here after implementation")

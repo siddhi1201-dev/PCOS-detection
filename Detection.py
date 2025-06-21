@@ -89,3 +89,44 @@ y_pred5=classifier5.predict(X_test)
 print(accuracy_score(y_test,y_pred5))
 cm=confusion_matrix(y_test,y_pred5)
 print(cm)
+
+
+import joblib
+
+# Save the encoder, scaler, and Decision Tree model
+joblib.dump(ct, 'onehot_encoder.pkl')
+joblib.dump(sc, 'scaler.pkl')
+joblib.dump(classifier4, 'dt_model.pkl')  # Save decision tree
+
+
+#processing the input_df
+
+import pickle
+
+# Load trained Decision Tree model
+with open('dt_model.pkl', 'rb') as f:
+    model = pickle.load(f)
+
+# Load OneHotEncoder for 'Period Flow'
+with open('onehot_encoder.pkl', 'rb') as f:
+    encoder = pickle.load(f)
+
+# Load StandardScaler
+with open('scaler.pkl', 'rb') as f:
+    scaler = pickle.load(f)
+
+def predict_pcos(df_input):
+    # Step 1: One-hot encode 'Period Flow'
+    encoded_period = encoder.transform(df_input[['Period Flow']])
+    df_input_encoded = df_input.drop(columns=['Period Flow'])
+
+    # Step 2: Combine encoded + rest of features
+    X_input = np.concatenate([encoded_period.toarray(), df_input_encoded.values], axis=1)
+
+    # Step 3: Scale only selected indexes
+    scale_indexes = [2, 3, 4, 6, 31]  # Update if your feature order changes
+    X_input[:, scale_indexes] = scaler.transform(X_input[:, scale_indexes])
+
+    # Step 4: Predict
+    prediction = model.predict(X_input)
+    return int(prediction[0])
