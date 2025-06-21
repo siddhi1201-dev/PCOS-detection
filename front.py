@@ -5,11 +5,6 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from PIL import Image
 import io
-from sklearn.preprocessing import OneHotEncoder, StandardScaler
-from sklearn.compose import ColumnTransformer
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split, GridSearchCV
-from sklearn.metrics import make_scorer, recall_score
 
 # Page configuration
 st.set_page_config(
@@ -48,53 +43,6 @@ st.markdown("""
     }
     </style>
     """, unsafe_allow_html=True)
-
-# Load and preprocess data
-@st.cache_resource
-def load_data():
-    dataset = pd.read_csv('PCOS Dataset.csv')
-    X = dataset.iloc[:,:-1].values
-    y = dataset.iloc[:,-1].values
-    
-    # One hot encoding for period flow
-    ct = ColumnTransformer(transformers=[('encoder', OneHotEncoder(),[15])], remainder='passthrough')
-    X = np.array(ct.fit_transform(X))
-    
-    # Train-test split
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
-    
-    # Feature scaling
-    sc = StandardScaler()
-    scale_indexes = [1, 2, 3, 4, 5, 15, 16, 17, 31]
-    X_train[:,scale_indexes] = sc.fit_transform(X_train[:,scale_indexes])
-    X_test[:,scale_indexes] = sc.transform(X_test[:,scale_indexes])
-    
-    return X_train, X_test, y_train, y_test, sc, ct
-
-# Train model
-@st.cache_resource
-def train_model(X_train, y_train):
-    # Focus on maximizing recall for Class 1
-    scorer = make_scorer(recall_score, pos_label=1)
-
-    params = {
-        'max_depth': [3, 5, None],
-        'min_samples_split': [2, 5],
-        'class_weight': ['balanced', {0: 1, 1: 2}, {0: 1, 1: 3}]
-    }
-
-    grid_search = GridSearchCV(
-        RandomForestClassifier(n_estimators=100, random_state=1),
-        params,
-        scoring=scorer,
-        cv=5
-    )
-    grid_search.fit(X_train, y_train)
-    return grid_search.best_estimator_
-
-# Load data and train model
-X_train, X_test, y_train, y_test, scaler, ct = load_data()
-model = train_model(X_train, y_train)
 
 # Sidebar
 with st.sidebar:
@@ -150,7 +98,6 @@ with tab1:
                                           ["Regular", "Irregular", "No periods"])
             periods_missed = st.number_input("Number of periods missed in last year", 
                                            min_value=0, max_value=12, value=0)
-            period_flow = st.selectbox("Period flow", ["Scanty", "Normal", "Heavy"])
     
         col3, col4 = st.columns(2)
         
@@ -161,8 +108,6 @@ with tab1:
             acne = st.select_slider("Acne severity", 
                                    options=["None", "Mild", "Moderate", "Severe"])
             hair_loss = st.checkbox("Hair loss/thinning")
-            skin_darkening = st.checkbox("Skin darkening")
-            pimples = st.checkbox("Pimples")
             
         with col4:
             st.subheader("Hormonal Levels")
@@ -171,8 +116,6 @@ with tab1:
             lh_fsh_ratio = lh / fsh if fsh != 0 else 0
             st.metric("LH/FSH Ratio", f"{lh_fsh_ratio:.2f}")
             testosterone = st.number_input("Testosterone (ng/dL)", min_value=0.0, max_value=200.0, value=30.0)
-            prl = st.number_input("Prolactin (ng/mL)", min_value=0.0, max_value=100.0, value=15.0)
-            vitd3 = st.number_input("Vitamin D3 (ng/mL)", min_value=0.0, max_value=100.0, value=30.0)
             
     else:
         uploaded_file = st.file_uploader("Upload your medical data", 
@@ -185,11 +128,17 @@ with tab1:
             
             st.success("File uploaded successfully!")
             st.dataframe(df.head())
+            
+            # Show column selector for mapping
+            st.subheader("Map your data columns")
+            # This would be more complex in a real implementation
+            st.info("In a full implementation, you would map your columns to expected fields here")
 
 with tab2:
     st.header("Data Analysis")
     
     if input_method == "Manual Entry" or (input_method == "Upload CSV/Excel" and uploaded_file is not None):
+        # This would be replaced with actual analysis code
         st.subheader("Key Indicators")
         
         fig, ax = plt.subplots(figsize=(10, 6))
@@ -205,6 +154,7 @@ with tab2:
         st.pyplot(fig)
         
         st.subheader("Correlation Analysis")
+        # Example correlation plot (in real app, would use actual data)
         corr_data = pd.DataFrame({
             'Age': np.random.normal(25, 5, 100),
             'BMI': np.random.normal(28, 6, 100),
@@ -222,55 +172,14 @@ with tab3:
     st.header("Results & Recommendations")
     
     if input_method == "Manual Entry" or (input_method == "Upload CSV/Excel" and uploaded_file is not None):
-        # Prepare input data for prediction
-        if input_method == "Manual Entry":
-            # Convert manual inputs to model input format
-            # Note: This mapping needs to match exactly with your training data features
-            input_data = {
-                'Age': age,
-                'Weight': weight,
-                'Height': height,
-                'BMI': bmi,
-                'Cycle length': cycle_length,
-                'Cycle regularity': 1 if cycle_regularity != "Regular" else 0,
-                'Periods missed': periods_missed,
-                'Period flow': period_flow,
-                'Hair growth': ['None', 'Mild', 'Moderate', 'Severe'].index(hair_growth),
-                'Acne': ['None', 'Mild', 'Moderate', 'Severe'].index(acne),
-                'Hair loss': 1 if hair_loss else 0,
-                'Skin darkening': 1 if skin_darkening else 0,
-                'Pimples': 1 if pimples else 0,
-                'LH': lh,
-                'FSH': fsh,
-                'LH/FSH': lh_fsh_ratio,
-                'Testosterone': testosterone,
-                'Prolactin': prl,
-                'Vitamin D3': vitd3
-            }
-            
-            # Convert to DataFrame for transformation
-            input_df = pd.DataFrame([input_data])
-            
-            # Apply the same transformations as training data
-            # One-hot encode period flow
-            X_input = ct.transform(input_df.values)
-            
-            # Scale the same features as training data
-            scale_indexes = [1, 2, 3, 4, 5, 15, 16, 17, 31]  # Adjust these indexes based on your actual feature positions
-            X_input[:,scale_indexes] = scaler.transform(X_input[:,scale_indexes])
-            
-            # Make prediction
-            prediction = model.predict(X_input)
-            prediction_proba = model.predict_proba(X_input)
-            
-            risk_score = prediction_proba[0][1] * 100  # Probability of PCOS
-            
-        else:
-            # For uploaded files, you would need to preprocess similarly
-            # This is simplified - in practice you'd need to match column names, etc.
-            st.warning("File upload prediction not fully implemented in this example")
-            risk_score = 50  # Placeholder
-            
+        # Mock prediction (in real app, would use actual model)
+        risk_score = min(100, max(0, 
+            (bmi - 25) * 2 + 
+            (lh_fsh_ratio - 1) * 10 + 
+            (0 if cycle_regularity == "Regular" else 20) + 
+            (testosterone - 30) / 2
+        ))
+        
         st.subheader("PCOS Risk Assessment")
         
         if risk_score < 30:
