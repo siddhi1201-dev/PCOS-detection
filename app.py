@@ -150,37 +150,37 @@ with tab2:
     st.header("Data Analysis")
     
     if 'submitted' in locals() and submitted:
-        # Prepare the input data
+        # Prepare the input data with all Yes/No converted to 1/0
         input_data = {
             'Age': age,
             'Height': height,
             'Weight': weight,
             'Sleeping Hours': sleeping_hours,
             'Working Hours': working_hours,
-            'Smoke': smoke,
-            'Alcohol': alcohol,
-            'Diabetic': diabetic,
-            'Hypertension': hypertension,
-            'Junk Food': junk_food,
-            'Mood Swings': mood_swings,
-            'Thyroid': thyroid,
-            'Stress/Anxiety/Depression': stress,
-            'Exercise': exercise,
+            'Smoke': 1 if smoke == "Yes" else 0,
+            'Alcohol': 1 if alcohol == "Yes" else 0,
+            'Diabetic': 1 if diabetic == "Yes" else 0,
+            'Hypertension': 1 if hypertension == "Yes" else 0,
+            'Junk Food': 1 if junk_food == "Yes" else 0,
+            'Mood Swings': 1 if mood_swings == "Yes" else 0,
+            'Thyroid': 1 if thyroid == "Yes" else 0,
+            'Stress/Anxiety/Depression': 1 if stress == "Yes" else 0,
+            'Exercise': 1 if exercise == "Yes" else 0,
             'First Period': first_period,
             'Period Flow': period_flow,
             'Cycle': cycle,
             'Period Length': period_length,
-            'Stress During Periods': stress_during_periods,
-            'Stress Affects Periods': stress_affects_periods,
-            'Hair Loss': hair_loss,
-            'Thinner Hair': thinner_hair,
-            'Unwanted Hair Growth': unwanted_hair,
-            'Weight Gain': weight_gain,
-            'Weight Loss': weight_loss,
-            'Acne': acne,
-            'Skin Darkening': skin_darkening,
-            'Centrally Obese': centrally_obese,
-            'Married': married,
+            'Stress During Periods': 1 if stress_during_periods == "Yes" else 0,
+            'Stress Affects Periods': 1 if stress_affects_periods == "Yes" else 0,
+            'Hair Loss': 1 if hair_loss == "Yes" else 0,
+            'Thinner Hair': 1 if thinner_hair == "Yes" else 0,
+            'Unwanted Hair Growth': 1 if unwanted_hair == "Yes" else 0,
+            'Weight Gain': 1 if weight_gain == "Yes" else 0,
+            'Weight Loss': 1 if weight_loss == "Yes" else 0,
+            'Acne': 1 if acne == "Yes" else 0,
+            'Skin Darkening': 1 if skin_darkening == "Yes" else 0,
+            'Centrally Obese': 1 if centrally_obese == "Yes" else 0,
+            'Married': 1 if married == "Yes" else 0,
             'Period Intervals': period_intervals
         }
         
@@ -191,83 +191,24 @@ with tab2:
         st.subheader("Input Data Summary")
         st.dataframe(input_df.T.rename(columns={0: 'Value'}))
         
-        # Visualizations
-        st.subheader("Key Health Indicators")
-        
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            # BMI Analysis
-            fig, ax = plt.subplots()
-            ax.bar(['Your BMI'], [bmi], color='skyblue')
-            ax.axhline(y=18.5, color='red', linestyle='--', label='Underweight')
-            ax.axhline(y=24.9, color='green', linestyle='--', label='Healthy')
-            ax.axhline(y=29.9, color='orange', linestyle='--', label='Overweight')
-            ax.axhline(y=34.9, color='red', linestyle='--', label='Obese')
-            ax.set_ylabel('BMI')
-            ax.legend()
-            st.pyplot(fig)
-        
-        with col2:
-            # Lifestyle Factors
-            lifestyle_data = {
-                'Smoking': 1 if smoke == "Yes" else 0,
-                'Alcohol': 1 if alcohol == "Yes" else 0,
-                'Exercise': 1 if exercise == "Yes" else 0,
-                'Junk Food': 1 if junk_food == "Yes" else 0
-            }
-            fig, ax = plt.subplots()
-            ax.bar(lifestyle_data.keys(), lifestyle_data.values(), color=['red', 'orange', 'green', 'purple'])
-            ax.set_ylabel('Yes=1, No=0')
-            ax.set_title('Lifestyle Factors')
-            st.pyplot(fig)
     else:
         st.warning("Please submit your information in the 'Data Input' tab first")
 
 # Tab 3: Results
 with tab3:
+  with tab3:
     st.header("PCOS Risk Prediction Results")
     
-    import pandas as pd
-    from Detection import predict_pcos
-
-    # Assume 'input_dict' contains user input collected via Streamlit form
-    #df_input = pd.DataFrame([input_df])
-
-    # Get prediction
-    result = predict_pcos(input_df)
-
-    # Show result
-    st.success("PCOS Detected" if result == 1 else "No PCOS Detected")
-
     if 'submitted' in locals() and submitted:
-        # Placeholder for actual model prediction
-        st.info("Model prediction would appear here after implementation")
-        
-        # Mock results section (to be replaced with actual model)
-        st.markdown("""
-        <div class="section">
-            <h4>Next Steps for Implementation:</h4>
-            <ol>
-                <li>Preprocess input data (one-hot encoding, scaling)</li>
-                <li>Load trained machine learning model</li>
-                <li>Make prediction on processed data</li>
-                <li>Display results with risk percentage and recommendations</li>
-            </ol>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        # Placeholder for what the results would look like
-        st.subheader("Example Output (Mock Data)")
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            st.metric("PCOS Risk Score", "72%", delta="High Risk", delta_color="inverse")
-            st.progress(72)
-            
-        with col2:
-            st.metric("Recommended Next Steps", "Consult Gynecologist")
-        
+        import pandas as pd
+        from Detection import predict_pcos
+
+        # Get prediction
+        result = predict_pcos(input_df)
+
+        # Show result
+        st.success("PCOS Detected" if result == 1 else "No PCOS Detected")
+
         st.markdown("""
         <div class="section">
             <h4>Key Contributing Factors:</h4>
