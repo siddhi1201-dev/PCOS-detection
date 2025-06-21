@@ -44,6 +44,29 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
+# Sidebar with info
+with st.sidebar:
+    st.title("PCOS Detection System")
+    st.image('icon2.jpg', width=200)  # Replace with actual image
+    st.markdown("""
+    ### About PCOS
+    Polycystic ovary syndrome (PCOS) is a hormonal disorder common among women of reproductive age. 
+    Symptoms include irregular menstrual periods, excess hair growth, acne, and obesity.
+    """)
+    
+    st.markdown("""
+    ### How to Use
+    1. Upload your medical data or enter manually
+    2. View the analysis and predictions
+    3. Get recommendations based on results
+    """)
+    
+    st.markdown("""
+    ### Disclaimer
+    This tool is not a substitute for professional medical advice. 
+    Always consult with a healthcare provider.
+    """)
+
 # Title
 st.title("🩺 PCOS Risk Prediction")
 st.markdown("Complete this form to assess your PCOS risk based on health and lifestyle factors")
@@ -98,7 +121,7 @@ with tab1:
         
         with col5:
             first_period = st.number_input("Age at first period", min_value=8, max_value=20, value=12)
-            period_flow = st.selectbox("Period flow", ["Mild", "Normal", "Heavy"])
+            period_flow = st.selectbox("Period flow", ["Light", "Normal", "Heavy"])
             cycle = st.number_input("Cycle length (days)", min_value=10, max_value=90, value=28)
         
         with col6:
@@ -132,7 +155,6 @@ with tab2:
             'Age': age,
             'Height': height,
             'Weight': weight,
-            'BMI': bmi,
             'Sleeping Hours': sleeping_hours,
             'Working Hours': working_hours,
             'Smoke': smoke,
@@ -294,27 +316,6 @@ with tab4:
     - [The Endocrine Society](https://www.endocrine.org/)
     """)
 
-# Sidebar with info
-with st.sidebar:
-    st.title("PCOS Detection System")
-    st.image('icon2.jpg', width=200)  # Replace with actual image
-    st.markdown("""
-    ### About PCOS
-    Polycystic ovary syndrome (PCOS) is a hormonal disorder common among women of reproductive age. 
-    Symptoms include irregular menstrual periods, excess hair growth, acne, and obesity.
-    """)
-    
-    st.markdown("""
-    ### How to Use
-    1. Upload your medical data or enter manually
-    2. View the analysis and predictions
-    3. Get recommendations based on results
-    """)
-    
-    st.markdown("""
-    ### Disclaimer
-    This tool is not a substitute for professional medical advice. 
-    Always consult with a healthcare provider.
-    """)
+
 
 # Add matplotlib import at the top if not already present
