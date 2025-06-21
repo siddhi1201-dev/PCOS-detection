@@ -29,7 +29,7 @@ st.markdown("""
         background-color: #eaddff;
     }
     .section {
-        background-color: white;
+        background-color: #F75A5A;
         border-radius: 10px;
         padding: 20px;
         margin-bottom: 20px;
@@ -253,8 +253,8 @@ with tab4:
     
     st.subheader("Find a Specialist")
     st.markdown("""
-    - [American College of Obstetricians and Gynecologists](https://www.acog.org/)
-    - [The Endocrine Society](https://www.endocrine.org/)
+    - [Dr.Batra's](https://www.drbatras.com/campaigns/google/gsm/pcos.aspx?gclsrc=aw.ds&&utm_source=Google_Search&utm_medium=CPC&utm_campaign=Awareness-Top-Cities-PCOS-Content&utm_adgroup=PCOS_Doctor+Specialist_Content&utm_term=Pcos%20doctor&gad_source=1&gad_campaignid=22357359090&gbraid=0AAAAADwVfX7jCxgxVsCAgQOslSq9J0cyj&gclid=Cj0KCQjwsNnCBhDRARIsAEzia4BTWPpcIMea-vzt_X31oTmGSkN_Fn1h0YCsBGWapmqQH9G94qgymSgaAnfOEALw_wcB)
+    - [Solo Clinic -Pune](https://www.soloclinicindia.com/best-gynecologist-in-pune?utm_medium=paidsearch&utm_source=google&utm_campaign=DAM-SEARCH-OBYGN-160625&utm_term=PCOS&utm_content=%22pcod%20dr%20near%20me&gad_source=1&gad_campaignid=22675918980&gbraid=0AAAAADo9j2doTKwN1cx1VQhKxPE4w8MZu&gclid=Cj0KCQjwsNnCBhDRARIsAEzia4A1_a-gNAjnVIaGQybwQyDSlFdhx3P26QPZAfV0Dam9nA9mD_WnWIgaAv9iEALw_wcB)
     """)
 
 
